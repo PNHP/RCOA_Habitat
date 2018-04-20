@@ -15,36 +15,38 @@ habitats <- function(hab_file){ # ,arg1, arg2, ...
 
 
 # function to created summarized habitat weights
-myfunction <- function(arg1, arg2, ... ){
-# need to add arguments to have a weighting factor or not.
-
-# statements
+habitat_weights <- function(sp_file, subform=FALSE){
   # turns the data frame into a table of counts and calculate proportions. 
-# the margin setting in prop.table adds row summaries of the individual habitat proportions
-count_table <- table(species_final$SNAME,species_final$habitatcode) # turns the raw data into a table of counts
-prop_table <- prop.table(count_table,margin=1) # adds column? summaries
-prop_table <- addmargins(prop_table,margin=2) #adds row? summaries
-
-# convert prop_table into a dataframe
-occ_prop <- as.data.frame.matrix(prop_table) 
-occ_prop <- cbind(row.names = rownames(occ_prop), occ_prop) # adds the row names into the data frame
-setDT(occ_prop, keep.rownames = TRUE)[]
-
-# this transforms the data into a table with one entry per species and habitat combination, this makes
-#    the calculatations a little easier (eg. less matrix math)
-results_melt <- melt(occ_prop, id="rn")
-setnames(results_melt,"variable","habitatcode") 
-setnames(results_melt,"value","observed")
-data_merge <- merge(results_melt,habitat,by="habitatcode",all=TRUE) # , allow.cartesian=TRUE
-data_merge <- data_merge[ which(!is.na(data_merge$expected)), ] # gets rid of empty values
+  # the margin setting in prop.table adds row summaries of the individual habitat proportions
+#  count_table <- table(species_final$SNAME,species_final$habitatcode) # turns the raw data into a table of counts
+#  prop_table <- prop.table(count_table,margin=1) # adds column? summaries
+#  prop_table <- addmargins(prop_table,margin=2) #adds row? summaries
+  # convert prop_table into a dataframe
+#  occ_prop <- as.data.frame.matrix(prop_table) 
+#  occ_prop <- cbind(row.names = rownames(occ_prop), occ_prop) # adds the row names into the data frame
+#  setDT(occ_prop, keep.rownames = TRUE)[]
+  # this transforms the data into a table with one entry per species and habitat combination, this makes
+  #    the calculatations a little easier (eg. less matrix math)
+#  results_melt <- melt(occ_prop, id="rn")
+#  setnames(results_melt,"variable","habitatcode") 
+#  setnames(results_melt,"value","observed")
+#  data_merge <- merge(results_melt,habitat,by="habitatcode",all=TRUE) # , allow.cartesian=TRUE
+#  data_merge <- data_merge[ which(!is.na(data_merge$expected)), ] # gets rid of empty values
 
 # formation subset   #######################################################
-lu_formation <- read.csv("lu_formation.csv", stringsAsFactors=FALSE)
-data_merge$Formation <- lu_formation[,3][match(data_merge$BaseHabitatData1,lu_formation[,5])] # join the formation in
+# lu_formation <- read.csv("lu_formation.csv", stringsAsFactors=FALSE)
+# data_merge$Formation <- lu_formation[,3][match(data_merge$BaseHabitatData1,lu_formation[,5])] # join the formation in
 #gets list of acceptable formations
-formation <- read.csv("lu_SGCN_Formation1.csv", stringsAsFactors=FALSE)
-library(tidyr)
-formation <- separate_rows(formation,Formation,sep=";") # Split delimited strings in a column and insert as new rows
+  if(isTRUE(subform)) {
+    formation <- read.csv("lu_SGCN_Formation1.csv", stringsAsFactors=FALSE)
+    formation <- separate_rows(formation,Formation,sep=";")
+  }
+return(formation)
+}
+
+
+
+# Split delimited strings in a column and insert as new rows
 formation$Formation_expected <- formation$Formation # just for reference
 data_merge <- merge(x=data_merge, y=formation, by.x=c("rn","Formation"),by.y=c("SNAME","Formation"), all.x=TRUE)
 data_merge <- data_merge[which(!is.na(data_merge$Formation_expected)), ]
@@ -85,6 +87,4 @@ habitat_weights <- habitat_weights[order(-habitat_weights$weight),] # sorts in d
 
 # write the summarized weights to a file so we can join it to the GIS
 write.csv(habitat_weights, "20180419_RSGCN_update_Regional.csv")
-  
-return(object)
-}
+
