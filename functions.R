@@ -6,17 +6,18 @@ library(tidyr)
 
 setwd("E:/Dropbox (PNHP @ WPC)/RCOAassoc/201804/RCOA_Habitat")
 
-# fucntion for reading in habitat data
-myfunction <- function(arg1, arg2, ... ){
-  #habitat <- read.csv("Habitat_DSLDistance.csv", na.strings=c("NA")) # DSL and Distance to Water
-  #habitat$habitatcode <- paste(habitat$BaseHabitatData1,habitat$BaseHabitatData2, sep="_")
-  statements
-return(object)
+# function for reading in habitat data
+habitats <- function(hab_file){ # ,arg1, arg2, ... 
+  aaa <- read.csv(hab_file, na.strings=c("NA")) # DSL and Distance to Water
+  aaa$habitatcode <- paste(aaa$BaseHabitatData1,aaa$BaseHabitatData2,sep="_")
+  return(aaa)
 }
 
 
 # function to created summarized habitat weights
 myfunction <- function(arg1, arg2, ... ){
+# need to add arguments to have a weighting factor or not.
+
 # statements
   # turns the data frame into a table of counts and calculate proportions. 
 # the margin setting in prop.table adds row summaries of the individual habitat proportions
