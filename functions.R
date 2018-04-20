@@ -13,7 +13,7 @@ habitats <- function(hab_file){ # ,arg1, arg2, ...
   aaa <- aaa[,!(names(aaa) %in% c("OBJECTID","VALUE"))] #drop a few unneeded columns
   # this counts the 'expected' values for the analysis. Basically calculates a proportion
   aaa$expected <- aaa$Count / sum(aaa$Count)
-  aaa <- subset(aaa, !duplicated(aaa)) # this gets down to a unique set of habitat codes as  having duplicates seems to upset the merge below. this step might not be necessary
+  aaa <- subset(aaa, !duplicated(aaa)) # this gets down to a unique set of habitat codes as having duplicates seems to upset the merge below. this step might not be necessary
   
   return(aaa)
 }
